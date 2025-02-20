@@ -104,17 +104,17 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-[var(--primary-light)] to-white dark:from-gray-900 dark:to-gray-800">
       <header className="glass-effect sticky top-0 z-50">
-        <nav className="container mx-auto px-6">
+        <nav className="container mx-auto px-4 sm:px-6">
           <div className="flex items-center h-14">
             <button
               onClick={() => setIsHistoryOpen(true)}
-              className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 text-[var(--text-secondary)] hover:text-[var(--primary-color)] transition-colors mr-4"
+              className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 text-[var(--text-secondary)] hover:text-[var(--primary-color)] transition-colors mr-2 sm:mr-4"
               title="搜索历史"
             >
               <MenuIcon />
             </button>
             
-            <div className="flex items-center flex-1 -mx-1.5">
+            <div className="hidden sm:flex items-center flex-1 -mx-1.5">
               {QUICK_LINKS.map((link) => {
                 const Icon = link.icon;
                 return (
@@ -132,11 +132,11 @@ export default function Home() {
               })}
             </div>
 
-            <div className="flex items-center gap-3 ml-4">
-              <button className="px-4 h-8 rounded-full text-sm hover:bg-white/10 dark:hover:bg-white/5 text-[var(--text-secondary)] hover:text-[var(--primary-color)] transition-colors">
+            <div className="flex items-center gap-2 sm:gap-3 ml-auto sm:ml-4">
+              <button className="px-3 sm:px-4 h-8 rounded-full text-sm hover:bg-white/10 dark:hover:bg-white/5 text-[var(--text-secondary)] hover:text-[var(--primary-color)] transition-colors">
                 登录
               </button>
-              <button className="px-4 h-8 rounded-full text-sm hover:bg-white/10 dark:hover:bg-white/5 text-[var(--text-secondary)] hover:text-[var(--primary-color)] transition-colors">
+              <button className="px-3 sm:px-4 h-8 rounded-full text-sm hover:bg-white/10 dark:hover:bg-white/5 text-[var(--text-secondary)] hover:text-[var(--primary-color)] transition-colors">
                 设置
               </button>
             </div>
@@ -144,18 +144,17 @@ export default function Home() {
         </nav>
       </header>
 
-      <main className="flex-grow flex flex-col items-center justify-center gap-12 px-6 animate-fade-in">
-        <div className="text-center space-y-6">
-
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] text-transparent bg-clip-text">
+      <main className="flex-grow flex flex-col items-center justify-center gap-8 sm:gap-12 px-4 sm:px-6 py-8 sm:py-0 animate-fade-in">
+        <div className="text-center space-y-4 sm:space-y-6">
+          <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] text-transparent bg-clip-text">
             QQ浏览器 AI搜索
           </h1>
-          <p className="text-[var(--text-secondary)] max-w-md mx-auto">
+          <p className="text-sm sm:text-base text-[var(--text-secondary)] max-w-md mx-auto px-4">
             基于人工智能的新一代搜索引擎，为您提供更智能、更精准的搜索体验
           </p>
         </div>
 
-        <div className="w-full max-w-2xl">
+        <div className="w-full max-w-2xl px-2">
           <SearchBar
             size="large"
             onSearch={handleSearch}
@@ -166,10 +165,10 @@ export default function Home() {
           />
         </div>
 
-        <div className="w-full max-w-4xl animate-fade-in">
-          <div className="flex flex-col gap-4 mb-6">
+        <div className="w-full max-w-4xl px-2 sm:px-4 animate-fade-in">
+          <div className="flex flex-col gap-4 mb-4 sm:mb-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-[var(--text-primary)]">
+              <h2 className="text-lg sm:text-xl font-semibold text-[var(--text-primary)]">
                 实时热点
               </h2>
               <button 
@@ -191,7 +190,7 @@ export default function Home() {
             <div className="flex items-center gap-2 flex-wrap">
               <button
                 onClick={() => setSelectedCategory(null)}
-                className={`px-3 py-1 rounded-full text-sm transition-colors ${
+                className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm transition-colors ${
                   selectedCategory === null
                     ? 'bg-[var(--primary-color)] text-white'
                     : 'bg-white/10 text-[var(--text-secondary)] hover:bg-white/20'
@@ -203,7 +202,7 @@ export default function Home() {
                 <button
                   key={category}
                   onClick={() => setSelectedCategory(category === selectedCategory ? null : category)}
-                  className={`px-3 py-1 rounded-full text-sm transition-colors ${
+                  className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm transition-colors ${
                     category === selectedCategory
                       ? 'bg-[var(--primary-color)] text-white'
                       : 'bg-white/10 text-[var(--text-secondary)] hover:bg-white/20'
@@ -215,27 +214,27 @@ export default function Home() {
             </div>
           </div>
 
-          <div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 transition-all duration-300 ${
+          <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 transition-all duration-300 ${
             showAllTopics ? 'lg:grid-cols-4' : 'lg:grid-cols-4'
           }`}>
             {filteredTopics.map((topic) => (
               <div
                 key={topic.id}
-                className="card group cursor-pointer hover:-translate-y-1"
+                className="card group cursor-pointer hover:-translate-y-1 p-3 sm:p-4"
                 onClick={() => handleSearch(topic.title)}
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xs px-3 py-1 rounded-full bg-[var(--primary-light)] text-[var(--primary-color)]">
+                  <span className="text-xs px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-[var(--primary-light)] text-[var(--primary-color)]">
                     {topic.category}
                   </span>
-                  <span className="text-xs text-[var(--accent-color)]">
+                  <span className="text-xs text-[var(--text-secondary)]">
                     {topic.hot.toLocaleString()}
                   </span>
                 </div>
-                <h3 className="text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors line-clamp-2 mb-2">
+                <h3 className="text-sm sm:text-base text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors line-clamp-2 mb-1 sm:mb-2">
                   {topic.title}
                 </h3>
-                <p className="text-sm text-[var(--text-secondary)] line-clamp-2">
+                <p className="text-xs sm:text-sm text-[var(--text-secondary)] line-clamp-2">
                   {topic.description}
                 </p>
               </div>

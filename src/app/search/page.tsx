@@ -14,6 +14,7 @@ const MOCK_RESULTS: SearchResult[] = [
     title: '人工智能发展现状与未来趋势分析',
     url: 'https://example.com/ai-trends',
     description: '本文深入分析了当前人工智能的发展现状，探讨了未来可能的发展方向和潜在影响。包括机器学习、深度学习、自然语言处理等领域的最新进展。',
+    thumbnail: 'https://images.unsplash.com/photo-1677442136019-21780ecad995',
     type: 'web',
     metadata: {
       source: '科技日报',
@@ -25,7 +26,7 @@ const MOCK_RESULTS: SearchResult[] = [
     title: 'AI应用案例：智能客服系统实践',
     url: 'https://example.com/ai-customer-service',
     description: '详细介绍了某公司如何使用AI技术改造传统客服系统，包括技术选型、实施过程、效果评估等内容。',
-    thumbnail: 'https://picsum.photos/200/300',
+    thumbnail: 'https://images.unsplash.com/photo-1531746790731-6c087fecd65a',
     type: 'web',
     metadata: {
       source: '企业技术博客',
@@ -37,6 +38,7 @@ const MOCK_RESULTS: SearchResult[] = [
     title: 'AI教程：从零开始学习机器学习',
     url: 'https://example.com/ml-tutorial',
     description: '面向初学者的机器学习入门教程，包含基础概念解释、实践案例和进阶路线图。',
+    thumbnail: 'https://images.unsplash.com/photo-1515879218367-8466d910aaa4',
     type: 'web',
     metadata: {
       source: '在线教育平台',
@@ -131,6 +133,7 @@ function SearchPageContent() {
   const [aiSummary] = useState<AISummary>(MOCK_AI_SUMMARY);
   const [isLoading, setIsLoading] = useState(false);
   const [followUpTip, setFollowUpTip] = useState<string | null>(null);
+  const [searchTime] = useState(() => (Math.random() * 0.5 + 0.1).toFixed(2));
 
   useEffect(() => {
     setIsLoading(true);
@@ -180,13 +183,13 @@ function SearchPageContent() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-[var(--primary-light)]/20 to-white/20 dark:from-gray-900 dark:to-gray-800">
       <header className="glass-effect sticky top-0 z-50 border-b border-[var(--border-color)]">
-        <div className="container mx-auto px-6 py-3 flex items-center gap-6">
+        <div className="container mx-auto px-4 sm:px-6 py-2 sm:py-3 flex items-center gap-4 sm:gap-6">
           <div 
-            className="flex items-baseline gap-1 cursor-pointer hover:opacity-80 transition-opacity"
+            className="hidden sm:flex items-baseline gap-1 cursor-pointer hover:opacity-80 transition-opacity"
             onClick={() => router.push('/')}
           >
             <span className="text-lg font-bold bg-gradient-to-br from-[var(--primary-color)] to-[var(--accent-color)] text-transparent bg-clip-text">
-              QQ浏览器-AI搜索
+              QQ浏览器-新一代AI搜索引擎
             </span>
           </div>
           <div className="flex-grow max-w-2xl relative">
@@ -197,7 +200,7 @@ function SearchPageContent() {
               onImageSearch={() => alert('图片搜索功能开发中...')}
             />
             {followUpTip && (
-              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-4 py-2 bg-gray-800 text-white text-sm rounded-lg whitespace-nowrap animate-fade-in z-50">
+              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-gray-800 text-white text-xs sm:text-sm rounded-lg whitespace-nowrap animate-fade-in z-50">
                 {followUpTip}
               </div>
             )}
@@ -208,11 +211,11 @@ function SearchPageContent() {
         </div>
       </header>
 
-      <main className="flex-grow container mx-auto px-6 py-8">
-        <div className="flex gap-8">
-          {/* AI 搜索报告部分 - 左侧 */}
-          <div className="w-[600px] flex-shrink-0">
-            <div className="sticky top-24">
+      <main className="flex-grow container mx-auto px-4 sm:px-6 py-4 sm:py-8">
+        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8">
+          {/* AI 搜索报告部分 - 移动端在上方，桌面端在左侧 */}
+          <div className="w-full lg:w-[600px] lg:flex-shrink-0">
+            <div className="lg:sticky lg:top-24">
               <AICard
                 summary={aiSummary}
                 loading={isLoading}
@@ -224,22 +227,22 @@ function SearchPageContent() {
             </div>
           </div>
 
-          {/* 参考网页链接部分 - 右侧 */}
+          {/* 参考网页链接部分 - 移动端在下方，桌面端在右侧 */}
           <div className="flex-grow min-w-0">
-            <div className="flex items-center gap-4 mb-4">
-              <h2 className="text-lg font-medium text-[var(--text-primary)]">参考资料</h2>
-              <span className="text-sm text-[var(--text-secondary)]">
+            <div className="flex items-center gap-2 sm:gap-4 mb-3 sm:mb-4">
+              <h2 className="text-base sm:text-lg font-medium text-[var(--text-primary)]">参考资料</h2>
+              <span className="text-xs sm:text-sm text-[var(--text-secondary)]">
                 （{results.length} 个相关结果）
               </span>
-              <span className="text-sm text-[var(--text-secondary)]">
+              <span className="text-xs sm:text-sm text-[var(--text-secondary)]">
                 •
               </span>
-              <span className="text-sm text-[var(--text-secondary)]">
-                {(Math.random() * 0.5 + 0.1).toFixed(2)} 秒
+              <span className="text-xs sm:text-sm text-[var(--text-secondary)]">
+                {searchTime} 秒
               </span>
             </div>
 
-            <div className="space-y-4 animate-fade-in">
+            <div className="space-y-3 sm:space-y-4 animate-fade-in">
               {results.map((result) => {
                 const { id, title, url, description, type, metadata, thumbnail } = result;
                 return (
@@ -255,6 +258,7 @@ function SearchPageContent() {
                       thumbnail
                     }}
                     onSelect={handleResultSelect}
+                    compact={true}
                   />
                 );
               })}
@@ -264,7 +268,7 @@ function SearchPageContent() {
       </main>
 
       <footer className="glass-effect border-t border-[var(--border-color)]">
-        <div className="container mx-auto px-6 py-4 text-center text-sm text-[var(--text-tertiary)]">
+        <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4 text-center text-xs sm:text-sm text-[var(--text-tertiary)]">
           <p>© 2024 QQ浏览器 AI搜索 - Demo版</p>
         </div>
       </footer>

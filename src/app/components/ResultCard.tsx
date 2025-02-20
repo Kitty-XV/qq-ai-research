@@ -8,13 +8,14 @@ export default function ResultCard({ result, onSelect, compact = false }: Result
     if (!thumbnail) return null;
 
     return (
-      <div className={`flex-shrink-0 overflow-hidden rounded-xl group-hover:scale-105 transition-transform duration-300 relative ${
-        compact ? 'w-24 h-20' : 'w-40 h-28'
+      <div className={`flex-shrink-0 overflow-hidden rounded-lg sm:rounded-xl group-hover:scale-105 transition-transform duration-300 relative ${
+        compact ? 'w-20 sm:w-24 h-16 sm:h-20' : 'w-32 sm:w-40 h-24 sm:h-28'
       }`}>
         <Image
           src={thumbnail}
           alt={title}
           fill
+          sizes="(max-width: 640px) 80px, (max-width: 1024px) 96px, 160px"
           className="object-cover"
           loading="lazy"
         />
@@ -49,25 +50,25 @@ export default function ResultCard({ result, onSelect, compact = false }: Result
       className="card group cursor-pointer hover:-translate-y-1"
       onClick={() => onSelect(result)}
     >
-      <div className={`flex gap-4`}>
+      <div className={`flex gap-2 sm:gap-4`}>
         {renderThumbnail()}
         <div className="flex-grow min-w-0">
-          <div className="flex items-center gap-2 mb-1.5">
-            <span className="text-base">{renderTypeIcon()}</span>
+          <div className="flex items-center gap-1.5 sm:gap-2 mb-1 sm:mb-1.5">
+            <span className="text-sm sm:text-base">{renderTypeIcon()}</span>
             <h3 className={`font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors truncate ${
-              compact ? 'text-base' : 'text-lg'
+              compact ? 'text-sm sm:text-base' : 'text-base sm:text-lg'
             }`}>
               {title}
             </h3>
           </div>
           
-          <p className={`text-[var(--text-secondary)] mb-2 line-clamp-2 ${
-            compact ? 'text-sm' : 'text-base'
+          <p className={`text-[var(--text-secondary)] mb-1.5 sm:mb-2 line-clamp-2 ${
+            compact ? 'text-xs sm:text-sm' : 'text-sm sm:text-base'
           }`}>
             {description}
           </p>
           
-          <div className="flex items-center gap-2 text-sm">
+          <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
             <span className="text-[var(--primary-color)] truncate">
               {getDomainFromUrl(url)}
             </span>
@@ -83,7 +84,7 @@ export default function ResultCard({ result, onSelect, compact = false }: Result
             {!compact && (
               <a
                 href={url}
-                className="btn-primary text-sm py-1.5"
+                className="btn-primary text-xs sm:text-sm py-1 sm:py-1.5"
                 onClick={(e) => e.stopPropagation()}
                 target="_blank"
                 rel="noopener noreferrer"

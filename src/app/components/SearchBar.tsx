@@ -54,7 +54,7 @@ export default function SearchBar({
   return (
     <div
       ref={searchBarRef}
-      className={`relative ${size === 'large' ? 'w-[600px]' : 'w-full max-w-2xl'} ${className}`}
+      className={`relative w-full ${size === 'large' ? 'sm:w-[600px]' : 'max-w-2xl'} ${className}`}
     >
       <form onSubmit={handleSubmit} className="relative">
         <input
@@ -65,17 +65,17 @@ export default function SearchBar({
             setShowSuggestions(true);
           }}
           className={`input-search ${
-            size === 'large' ? 'text-lg py-4' : 'text-base py-2'
-          } pr-32`}
+            size === 'large' ? 'text-base sm:text-lg py-3 sm:py-4' : 'text-base py-2'
+          } pr-24 sm:pr-32`}
           placeholder="输入搜索内容..."
         />
-        <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+        <div className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 flex items-center gap-0.5 sm:gap-1">
           {onVoiceSearch && (
             <div className="relative">
               <button
                 type="button"
                 onClick={() => handleFeatureClick('voice')}
-                className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-[var(--primary-light)] text-[var(--primary-color)] transition-all duration-200"
+                className="w-8 sm:w-10 h-8 sm:h-10 flex items-center justify-center rounded-lg hover:bg-[var(--primary-light)] text-[var(--primary-color)] transition-all duration-200"
                 title="语音搜索"
               >
                 <VoiceIcon />
@@ -87,7 +87,7 @@ export default function SearchBar({
               <button
                 type="button"
                 onClick={() => handleFeatureClick('image')}
-                className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-[var(--primary-light)] text-[var(--primary-color)] transition-all duration-200"
+                className="w-8 sm:w-10 h-8 sm:h-10 flex items-center justify-center rounded-lg hover:bg-[var(--primary-light)] text-[var(--primary-color)] transition-all duration-200"
                 title="图片搜索"
               >
                 <ImageIcon />
@@ -96,7 +96,7 @@ export default function SearchBar({
           )}
           <button
             type="submit"
-            className="w-10 h-10 flex items-center justify-center rounded-lg text-[var(--primary-color)] hover:text-[var(--primary-color)]/80 transition-colors ml-1"
+            className="w-8 sm:w-10 h-8 sm:h-10 flex items-center justify-center rounded-lg text-[var(--primary-color)] hover:text-[var(--primary-color)]/80 transition-colors ml-0.5 sm:ml-1"
             title="搜索"
           >
             <SearchIcon />
