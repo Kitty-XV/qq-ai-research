@@ -186,7 +186,7 @@ function SearchPageContent() {
             onClick={() => router.push('/')}
           >
             <span className="text-lg font-bold bg-gradient-to-br from-[var(--primary-color)] to-[var(--accent-color)] text-transparent bg-clip-text">
-              AI Search
+              QQ浏览器-AI搜索
             </span>
           </div>
           <div className="flex-grow max-w-2xl relative">

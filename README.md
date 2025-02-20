@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# QQ浏览器 - AI搜索引擎设计
 
-## Getting Started
+> 🎓 本项目是腾讯产品经理训练营课题作品，旨在探索和实践下一代搜索引擎的产品形态。
 
-First, run the development server:
+## 📋 项目背景
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+本项目源于腾讯产品经理训练营的实践课题，通过对搜索引擎产品的深入思考和实践，探索 AI 时代下搜索引擎的创新方向。项目融合了以下核心理念：
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **AI 驱动的智能化搜索**：利用人工智能技术提供更精准的搜索结果和内容总结
+- **用户体验优先**：注重交互设计和视觉体验，提供流畅的搜索体验
+- **多模态交互**：支持文本、语音、图片等多种搜索方式
+- **个性化推荐**：基于用户行为的智能推荐系统
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🌟 产品特性
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- 🤖 **AI 智能摘要**：自动生成搜索结果的智能总结，帮助用户快速获取关键信息
+- 🎯 **实时热点**：基于用户兴趣的分类热点推荐，提供精准的信息导航
+- 🔍 **多模态搜索**：支持文本、语音、图片搜索，满足不同场景需求
+- 💡 **智能推荐**：基于用户搜索历史的个性化推荐，提升搜索效率
+- 🌓 **深色模式**：支持浅色/深色主题切换，优化不同环境下的使用体验
+- 📱 **响应式设计**：完美适配各种设备屏幕，确保一致的用户体验
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+## 📄 许可证
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+本项目采用特殊的使用许可：
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- 学习教育：可用于个人学习和教育培训
+- 知识产权：设计内容归属项目创作者，QQ浏览器品牌资产归属腾讯公司
+- 代码使用：项目代码采用 MIT 许可证开源
+- 使用限制：禁止商业用途，需注明项目来源
+
+详细条款请参见 [LICENSE](LICENSE) 文件。
+
+---
+
+> 📌 本项目为腾讯产品经理训练营课题作品，仅用于学习和交流目的。
+
+
