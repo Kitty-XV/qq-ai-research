@@ -133,13 +133,21 @@ function SearchPageContent() {
   const [aiSummary] = useState<AISummary>(MOCK_AI_SUMMARY);
   const [isLoading, setIsLoading] = useState(false);
   const [followUpTip, setFollowUpTip] = useState<string | null>(null);
-  const [searchTime] = useState(() => (Math.random() * 0.5 + 0.1).toFixed(2));
+  const [searchTime, setSearchTime] = useState<string>('0.00');
 
   useEffect(() => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
+    if (query) {
+      const startTime = performance.now();
+      setIsLoading(true);
+      
+      // 模拟搜索请求
+      setTimeout(() => {
+        const endTime = performance.now();
+        const duration = ((endTime - startTime) / 1000).toFixed(2);
+        setSearchTime(duration);
+        setIsLoading(false);
+      }, 1000);
+    }
   }, [query]);
 
   useEffect(() => {
@@ -182,14 +190,15 @@ function SearchPageContent() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-[var(--primary-light)]/20 to-white/20 dark:from-gray-900 dark:to-gray-800">
-      <header className="glass-effect sticky top-0 z-50 border-b border-[var(--border-color)]">
+      <header className="sticky top-0 z-50 border-b border-[var(--border-color)]/50 bg-gradient-to-b from-[var(--primary-light)]/20 via-[var(--primary-light)]/20 to-transparent backdrop-blur-sm">
         <div className="container mx-auto px-4 sm:px-6 py-2 sm:py-3 flex items-center gap-4 sm:gap-6">
           <div 
-            className="hidden sm:flex items-baseline gap-1 cursor-pointer hover:opacity-80 transition-opacity"
+            className="flex items-baseline gap-1 cursor-pointer hover:opacity-80 transition-opacity"
             onClick={() => router.push('/')}
           >
-            <span className="text-lg font-bold bg-gradient-to-br from-[var(--primary-color)] to-[var(--accent-color)] text-transparent bg-clip-text">
-              QQ浏览器-新一代AI搜索引擎
+            <span className="text-base sm:text-lg font-bold bg-gradient-to-br from-[var(--primary-color)] to-[var(--accent-color)] text-transparent bg-clip-text truncate">
+              <span className="sm:hidden">AI搜索</span>
+              <span className="hidden sm:inline">QQ浏览器-新一代AI搜索引擎</span>
             </span>
           </div>
           <div className="flex-grow max-w-2xl relative">

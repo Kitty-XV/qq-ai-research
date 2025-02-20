@@ -103,7 +103,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-[var(--primary-light)] to-white dark:from-gray-900 dark:to-gray-800">
-      <header className="glass-effect sticky top-0 z-50">
+      <header className="sticky top-0 z-50 border-b border-[var(--border-color)]/50 bg-gradient-to-b from-[var(--primary-light)] via-[var(--primary-light)] to-transparent backdrop-blur-sm">
         <nav className="container mx-auto px-4 sm:px-6">
           <div className="flex items-center h-14">
             <button
