@@ -5,8 +5,16 @@
 :root {
   --primary-color: #0066FF;
   --primary-light: #E5F0FF;
+  --primary-dark: #0052CC;
   --secondary-color: #F8FAFC;
   --accent-color: #FF3366;
+  --accent-light: #FFE5EB;
+  --success-color: #10B981;
+  --success-light: #ECFDF5;
+  --warning-color: #F59E0B;
+  --warning-light: #FFFBEB;
+  --error-color: #EF4444;
+  --error-light: #FEF2F2;
   --text-primary: #1A1A1A;
   --text-secondary: #4A5568;
   --text-tertiary: #718096;
@@ -14,6 +22,21 @@
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  
+  /* 动画持续时间变量 */
+  --animation-duration-fast: 0.15s;
+  --animation-duration-normal: 0.25s;
+  --animation-duration-slow: 0.35s;
+  --transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark {
+  --primary-light: #1E3A8A;
+  --secondary-color: #1F2937;
+  --text-primary: #F1F5F9;
+  --text-secondary: #E2E8F0;
+  --text-tertiary: #CBD5E1;
+  --border-color: #374151;
 }
 
 @layer base {
@@ -25,19 +48,17 @@
   ::selection {
     @apply bg-[var(--primary-light)] text-[var(--primary-color)];
   }
-}
-
-@layer components {
-  .btn-primary {
-    @apply bg-[var(--primary-color)] text-white px-6 py-2.5 rounded-full hover:opacity-90 transition-all duration-200 shadow-sm hover:shadow-md;
-  }
   
-  .btn-secondary {
-    @apply bg-[var(--secondary-color)] text-[var(--text-primary)] px-6 py-2.5 rounded-full hover:bg-gray-100 transition-all duration-200;
+  /* 搜索框样式更新 - 更自然现代的设计 */
+  .search-container {
+    @apply relative transition-all duration-200 shadow-sm hover:shadow-md;
   }
   
   .input-search {
-    @apply w-full px-6 py-4 rounded-full border border-[var(--border-color)] focus:outline-none focus:border-[var(--primary-color)] focus:ring-2 focus:ring-[var(--primary-light)] transition-all duration-200 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md;
+    @apply w-full px-5 py-3.5 rounded-xl border border-[var(--border-color)] 
+    focus:outline-none focus:border-[var(--primary-color)] focus:ring-1 
+    focus:ring-[var(--primary-light)] transition-all duration-200 
+    bg-white dark:bg-gray-800/90 placeholder-[var(--text-tertiary)];
   }
 
   .card {
@@ -49,15 +70,53 @@
   }
 }
 
+@layer components {
+  .btn-primary {
+    @apply bg-[var(--primary-color)] text-white px-6 py-2.5 rounded-full hover:opacity-90 active:scale-[0.98] transition-all duration-200 shadow-sm hover:shadow-md;
+  }
+  
+  .btn-secondary {
+    @apply bg-[var(--secondary-color)] text-[var(--text-primary)] px-6 py-2.5 rounded-full hover:bg-gray-100 active:scale-[0.98] transition-all duration-200;
+  }
+  
+  .glass-effect {
+    @apply backdrop-blur-md bg-white/80 dark:bg-gray-900/80;
+  }
+}
+
+/* 简化的动画 */
 .animate-fade-in {
-  animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: fadeIn var(--animation-duration-normal) var(--transition-timing);
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp var(--animation-duration-normal) var(--transition-timing);
 }
 
 .animate-scale-in {
-  animation: scaleIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: scaleIn var(--animation-duration-fast) var(--transition-timing);
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-soft {
+  animation: pulseSoft 2s ease-in-out infinite;
 }
 
 @keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
   from {
     opacity: 0;
     transform: translateY(10px);
@@ -71,7 +130,7 @@
 @keyframes scaleIn {
   from {
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(0.98);
   }
   to {
     opacity: 1;
@@ -79,10 +138,37 @@
   }
 }
 
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes pulseSoft {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.02);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 /* 自定义滚动条 */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -98,11 +184,59 @@
 }
 
 .glass-effect {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .dark .glass-effect {
-  background: rgba(17, 24, 39, 0.7);
+  background: rgba(17, 24, 39, 0.8);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 毛玻璃卡片效果 */
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  transition: all var(--animation-duration-normal) var(--transition-timing);
+}
+
+.dark .glass-card {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* 渐变背景 */
+.gradient-bg {
+  background: linear-gradient(120deg, var(--primary-light), #f0f9ff, #e0f2fe);
+}
+
+.dark .gradient-bg {
+  background: linear-gradient(120deg, #0f172a, #1e293b, #1e3a8a);
+}
+
+/* 简化霓虹灯效果 */
+.neon-text {
+  text-shadow: 0 0 5px var(--primary-color);
+}
+
+/* 提示气泡 */
+.tooltip {
+  @apply absolute z-50 px-3 py-1.5 text-xs rounded-lg whitespace-nowrap;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  animation: fadeIn var(--animation-duration-fast) var(--transition-timing);
+}
+
+/* 响应式调整 */
+@media (max-width: 640px) {
+  .card {
+    @apply p-4;
+  }
+  
+  .input-search {
+    @apply py-3;
+  }
 }

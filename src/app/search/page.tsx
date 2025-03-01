@@ -1,11 +1,17 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import SearchBar from '../components/SearchBar';
 import AICard from '../components/AICard';
 import ResultCard from '../components/ResultCard';
 import { SearchResult, AISummary } from '../types';
+
+/**
+ * 搜索结果页面组件
+ * 展示搜索结果和AI智能摘要
+ */
 
 // 模拟数据
 const MOCK_RESULTS: SearchResult[] = [
@@ -45,6 +51,30 @@ const MOCK_RESULTS: SearchResult[] = [
       time: '2024-02-18',
     },
   },
+  {
+    id: '4',
+    title: '人工智能在医疗领域的应用前景',
+    url: 'https://example.com/ai-healthcare',
+    description: '探讨人工智能技术如何革新医疗健康行业，包括疾病诊断、药物研发、个性化治疗等方面的最新进展。',
+    thumbnail: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef',
+    type: 'web',
+    metadata: {
+      source: '医疗科技论坛',
+      time: '2024-02-17',
+    },
+  },
+  {
+    id: '5',
+    title: '2024年AI创业投资分析报告',
+    url: 'https://example.com/ai-investment',
+    description: '全面分析2024年人工智能领域的投资热点、融资趋势和商业机会，为创业者和投资者提供决策参考。',
+    thumbnail: 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e',
+    type: 'web',
+    metadata: {
+      source: '创投周刊',
+      time: '2024-02-15',
+    },
+  },
 ];
 
 const MOCK_AI_SUMMARY: AISummary = {
@@ -78,221 +108,366 @@ const MOCK_AI_SUMMARY: AISummary = {
    📚 创新应用：
    - 智能题库和作业系统
    - 个性化学习路径规划
-   - 实时学习效果分析
-   
-   🎯 具体成果：
-   • 学习效率提升 45%
-   • 教师工作负担减少 30%
-   • 学生参与度增加 55%
-
-4. 医疗健康领域的突破
-   🏥 主要应用：
-   - 医学影像诊断辅助
-   - 药物研发加速
-   - 个性化治疗方案制定
-   
-   📈 实际效果：
-   • 诊断准确率提升 40%
-   • 药物研发周期缩短 35%
-   • 治疗方案优化效率提高 50%
-
-未来发展趋势：
-1. 技术融合：AI + 5G + IoT 的深度整合
-2. 算力提升：量子计算与神经网络的结合
-3. 应用普及：低代码平台推动 AI 民主化
-4. 伦理规范：建立更完善的 AI 伦理框架
-
-💡 专家建议：
-• 企业应积极布局 AI 技术，建立专门的创新团队
-• 重视数据安全和隐私保护
-• 加强产学研合作，促进技术转化
-• 持续投资人才培养和基础设施建设`,
+   - 自适应教学内容推荐`,
   sources: [
-    '科技日报 - 人工智能发展现状与未来趋势分析（2024年度报告）',
-    '企业技术博客 - AI应用案例：智能客服系统最佳实践',
-    '教育科技周刊 - AI 教育应用白皮书',
-    '医疗创新论坛 - AI 赋能医疗健康产业研究报告',
-    'AI 研究院 - 2024 人工智能发展趋势展望'
+    '科技日报《人工智能发展现状与未来趋势分析》',
+    '企业技术博客《AI应用案例：智能客服系统实践》',
+    '在线教育平台《AI教程：从零开始学习机器学习》',
   ],
   timestamp: Date.now(),
   followUpQuestions: [
-    '智能客服系统如何实现情感识别和个性化回应？',
-    '机器学习在医疗影像诊断中的具体应用流程是什么？',
-    'AI 教育系统如何制定个性化学习路径？',
-    '量子计算将如何改变 AI 的发展方向？',
-    'AI 伦理框架应该包含哪些关键要素？'
+    'AI在医疗领域有哪些具体应用?',
+    '小型企业如何应用AI提升效率?',
+    '当前AI技术面临哪些主要挑战?',
   ],
 };
 
-function SearchPageContent() {
-  const router = useRouter();
+// 搜索建议
+const SEARCH_SUGGESTIONS = [
+  'AI技术最新发展',
+  '机器学习框架比较',
+  '深度学习实践案例',
+  'AI伦理问题研究',
+  'AI应用开发教程',
+];
+
+// 背景装饰组件
+const BackgroundDecoration = () => (
+  <div className="absolute inset-0 overflow-hidden pointer-events-none">
+    <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-[var(--primary-light)]/30 to-transparent"></div>
+    <div className="absolute -top-40 -right-40 w-80 h-80 bg-[var(--primary-light)] rounded-full opacity-10 blur-3xl"></div>
+    <div className="absolute top-60 -left-20 w-60 h-60 bg-[var(--accent-light)] rounded-full opacity-10 blur-3xl"></div>
+  </div>
+);
+
+// 搜索内容组件，将useSearchParams()封装在此组件中
+function SearchContent() {
   const searchParams = useSearchParams();
-  const query = searchParams.get('q') || '';
-  
-  const [results] = useState<SearchResult[]>(MOCK_RESULTS);
-  const [aiSummary] = useState<AISummary>(MOCK_AI_SUMMARY);
-  const [isLoading, setIsLoading] = useState(false);
-  const [followUpTip, setFollowUpTip] = useState<string | null>(null);
-  const [searchTime, setSearchTime] = useState<string>('0.00');
+  const router = useRouter();
+  const query = searchParams?.get('q') || '';
+  const [searchQuery, setSearchQuery] = useState(query);
+  const [results, setResults] = useState<SearchResult[]>([]);
+  const [aiSummary, setAiSummary] = useState<AISummary | null>(null);
+  const [isAiLoading, setIsAiLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('all');
+  const [hasScrolled, setHasScrolled] = useState(false);
+  const headerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // 模拟搜索结果加载
     if (query) {
-      const startTime = performance.now();
-      setIsLoading(true);
+      setSearchQuery(query);
+      setResults(MOCK_RESULTS);
       
-      // 模拟搜索请求
-      setTimeout(() => {
-        const endTime = performance.now();
-        const duration = ((endTime - startTime) / 1000).toFixed(2);
-        setSearchTime(duration);
-        setIsLoading(false);
-      }, 1000);
+      // 模拟AI摘要加载（有延迟）
+      setIsAiLoading(true);
+      const timer = setTimeout(() => {
+        setAiSummary(MOCK_AI_SUMMARY);
+        setIsAiLoading(false);
+      }, 1500);
+      
+      return () => clearTimeout(timer);
     }
   }, [query]);
 
   useEffect(() => {
-    if (followUpTip) {
-      const timer = setTimeout(() => setFollowUpTip(null), 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [followUpTip]);
+    const handleScroll = () => {
+      if (window.scrollY > 80) {
+        setHasScrolled(true);
+      } else {
+        setHasScrolled(false);
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleSearch = (newQuery: string) => {
-    router.push(`/search?q=${encodeURIComponent(newQuery)}`);
+    if (newQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(newQuery.trim())}`);
+    }
   };
 
-  const handleResultSelect = (result: SearchResult) => {
-    window.open(result.url, '_blank');
+  const handleVoiceSearch = () => {
+    alert('语音搜索功能开发中...');
   };
 
-  const handleRegenerate = () => {
-    setIsLoading(true);
+  const handleImageSearch = () => {
+    alert('图片搜索功能开发中...');
+  };
+
+  const handleRegenerateAi = () => {
+    setIsAiLoading(true);
     setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
+      setAiSummary(MOCK_AI_SUMMARY);
+      setIsAiLoading(false);
+    }, 1500);
   };
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(aiSummary.text);
+  const handleCopyAi = () => {
+    // 复制功能已在AICard组件内部实现
   };
 
-  const handleFeedback = (type: 'positive' | 'negative') => {
-    // 反馈处理逻辑
+  const handleAiFeedback = (type: 'positive' | 'negative') => {
+    // 反馈功能已在AICard组件内部实现
   };
 
   const handleFollowUp = (question: string) => {
-    setIsLoading(true);
-    setFollowUpTip(`收到追问：${question}`);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
+    handleSearch(question);
+  };
+
+  const handleResultSelect = (result: SearchResult) => {
+    // 在真实环境中会跳转到结果URL
+    window.open(result.url, '_blank');
+  };
+
+  const filteredResults = activeTab === 'all' 
+    ? results 
+    : results.filter(result => result.type === activeTab);
+
+  const resultVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { 
+        staggerChildren: 0.1 
+      }
+    }
+  };
+
+  const resultItemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 15
+      }
+    }
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-[var(--primary-light)]/20 to-white/20 dark:from-gray-900 dark:to-gray-800">
-      <header className="sticky top-0 z-50 border-b border-[var(--border-color)]/50 bg-gradient-to-b from-[var(--primary-light)]/20 via-[var(--primary-light)]/20 to-transparent backdrop-blur-sm">
-        <div className="container mx-auto px-4 sm:px-6 py-2 sm:py-3 flex items-center gap-4 sm:gap-6">
-          <div 
-            className="flex items-baseline gap-1 cursor-pointer hover:opacity-80 transition-opacity"
-            onClick={() => router.push('/')}
-          >
-            <span className="text-base sm:text-lg font-bold bg-gradient-to-br from-[var(--primary-color)] to-[var(--accent-color)] text-transparent bg-clip-text truncate">
-              <span className="sm:hidden">AI搜索</span>
-              <span className="hidden sm:inline">QQ浏览器-新一代AI搜索引擎</span>
-            </span>
+    <div className="min-h-screen flex flex-col bg-white dark:bg-gray-900 relative">
+      <BackgroundDecoration />
+      
+      <header 
+        ref={headerRef}
+        className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+          hasScrolled 
+            ? 'bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-md py-2' 
+            : 'py-4'
+        }`}
+      >
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="flex items-center justify-between gap-4">
+            <button
+              onClick={() => router.push('/')}
+              className="text-xl font-bold text-[var(--primary-color)] flex items-center gap-2"
+            >
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20Z" fill="currentColor"/>
+                <path d="M10 16.5L16 12L10 7.5V16.5Z" fill="currentColor"/>
+              </svg>
+              <span className="hidden sm:inline">AI搜索</span>
+            </button>
+            
+            <div className="flex-grow max-w-2xl">
+              <SearchBar 
+                size="small"
+                onSearch={handleSearch}
+                onVoiceSearch={handleVoiceSearch}
+                onImageSearch={handleImageSearch}
+                suggestions={SEARCH_SUGGESTIONS}
+              />
+            </div>
+            
+            <div className="hidden sm:flex items-center gap-2">
+              <button className="px-3 py-1.5 rounded-full text-sm hover:bg-gray-100 dark:hover:bg-gray-800 text-[var(--text-secondary)] transition-colors">
+                设置
+              </button>
+              <button className="px-3 py-1.5 rounded-full text-sm bg-[var(--primary-light)] text-[var(--primary-color)] hover:bg-[var(--primary-light)]/80 transition-colors">
+                登录
+              </button>
+            </div>
           </div>
-          <div className="flex-grow max-w-2xl relative">
-            <SearchBar
-              size="small"
-              onSearch={handleSearch}
-              onVoiceSearch={() => alert('语音搜索功能开发中...')}
-              onImageSearch={() => alert('图片搜索功能开发中...')}
-            />
-            {followUpTip && (
-              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-gray-800 text-white text-xs sm:text-sm rounded-lg whitespace-nowrap animate-fade-in z-50">
-                {followUpTip}
-              </div>
-            )}
-          </div>
-          <button className="text-sm hover:text-[var(--primary-color)] transition-colors">
-            设置
-          </button>
         </div>
       </header>
 
-      <main className="flex-grow container mx-auto px-4 sm:px-6 py-4 sm:py-8">
-        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8">
-          {/* AI 搜索报告部分 - 移动端在上方，桌面端在左侧 */}
-          <div className="w-full lg:w-[600px] lg:flex-shrink-0">
-            <div className="lg:sticky lg:top-24">
-              <AICard
-                summary={aiSummary}
-                loading={isLoading}
-                onRegenerate={handleRegenerate}
-                onCopy={handleCopy}
-                onFeedback={handleFeedback}
-                onFollowUp={handleFollowUp}
-              />
+      <main className="flex-grow container mx-auto px-4 sm:px-6 py-4 sm:py-6">
+        {query ? (
+          <div className="flex flex-col md:flex-row gap-6 md:gap-10">
+            <div className="md:w-[230px] lg:w-[280px] shrink-0">
+              <div className="sticky top-24">
+                <motion.div 
+                  className="space-y-6"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-[var(--border-color)] shadow-sm">
+                    <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-3">搜索类型</h3>
+                    <div className="space-y-1">
+                      <button 
+                        onClick={() => setActiveTab('all')}
+                        className={`flex items-center w-full px-3 py-2 rounded-lg text-sm transition-colors ${
+                          activeTab === 'all'
+                            ? 'bg-[var(--primary-light)] text-[var(--primary-color)]'
+                            : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-[var(--text-secondary)]'
+                        }`}
+                      >
+                        <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" fill="currentColor"/>
+                        </svg>
+                        所有结果
+                      </button>
+                      <button 
+                        onClick={() => setActiveTab('web')}
+                        className={`flex items-center w-full px-3 py-2 rounded-lg text-sm transition-colors ${
+                          activeTab === 'web'
+                            ? 'bg-[var(--primary-light)] text-[var(--primary-color)]'
+                            : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-[var(--text-secondary)]'
+                        }`}
+                      >
+                        <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20ZM13 7H11V9H13V7ZM13 11H11V17H13V11Z" fill="currentColor"/>
+                        </svg>
+                        网页
+                      </button>
+                      <button 
+                        onClick={() => setActiveTab('image')}
+                        className={`flex items-center w-full px-3 py-2 rounded-lg text-sm transition-colors ${
+                          activeTab === 'image'
+                            ? 'bg-[var(--primary-light)] text-[var(--primary-color)]'
+                            : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-[var(--text-secondary)]'
+                        }`}
+                      >
+                        <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4.86 8.86l-3 3.87L9 13.14 6 17h12l-3.86-5.14z" fill="currentColor"/>
+                        </svg>
+                        图片
+                      </button>
+                      <button 
+                        onClick={() => setActiveTab('video')}
+                        className={`flex items-center w-full px-3 py-2 rounded-lg text-sm transition-colors ${
+                          activeTab === 'video'
+                            ? 'bg-[var(--primary-light)] text-[var(--primary-color)]'
+                            : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-[var(--text-secondary)]'
+                        }`}
+                      >
+                        <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12zM12 5.5v9l6-4.5z" fill="currentColor"/>
+                        </svg>
+                        视频
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-[var(--border-color)] shadow-sm">
+                    <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-3">相关搜索</h3>
+                    <div className="space-y-2">
+                      {SEARCH_SUGGESTIONS.map((suggestion, index) => (
+                        <button
+                          key={index}
+                          onClick={() => handleSearch(suggestion)}
+                          className="w-full text-left px-3 py-2 text-sm text-[var(--text-primary)] hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                        >
+                          {suggestion}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
             </div>
-          </div>
-
-          {/* 参考网页链接部分 - 移动端在下方，桌面端在右侧 */}
-          <div className="flex-grow min-w-0">
-            <div className="flex items-center gap-2 sm:gap-4 mb-3 sm:mb-4">
-              <h2 className="text-base sm:text-lg font-medium text-[var(--text-primary)]">参考资料</h2>
-              <span className="text-xs sm:text-sm text-[var(--text-secondary)]">
-                （{results.length} 个相关结果）
-              </span>
-              <span className="text-xs sm:text-sm text-[var(--text-secondary)]">
-                •
-              </span>
-              <span className="text-xs sm:text-sm text-[var(--text-secondary)]">
-                {searchTime} 秒
-              </span>
-            </div>
-
-            <div className="space-y-3 sm:space-y-4 animate-fade-in">
-              {results.map((result) => {
-                const { id, title, url, description, type, metadata, thumbnail } = result;
-                return (
-                  <ResultCard
-                    key={id}
-                    result={{
-                      id,
-                      title,
-                      url,
-                      description,
-                      type,
-                      metadata,
-                      thumbnail
-                    }}
-                    onSelect={handleResultSelect}
-                    compact={true}
+            
+            <div className="flex-grow">
+              <AnimatePresence>
+                <div className="mb-6">
+                  <AICard
+                    summary={aiSummary}
+                    loading={isAiLoading}
+                    onRegenerate={handleRegenerateAi}
+                    onCopy={handleCopyAi}
+                    onFeedback={handleAiFeedback}
+                    onFollowUp={handleFollowUp}
                   />
-                );
-              })}
+                </div>
+              </AnimatePresence>
+              
+              {filteredResults.length > 0 ? (
+                <motion.div
+                  className="space-y-4"
+                  variants={resultVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  <h2 className="text-xl font-semibold text-[var(--text-primary)]">搜索结果</h2>
+                  
+                  {filteredResults.map((result) => (
+                    <motion.div 
+                      key={result.id}
+                      variants={resultItemVariants}
+                    >
+                      <ResultCard
+                        result={result}
+                        onSelect={handleResultSelect}
+                      />
+                    </motion.div>
+                  ))}
+                </motion.div>
+              ) : (
+                <div className="text-center py-12">
+                  <p className="text-[var(--text-tertiary)]">无搜索结果</p>
+                </div>
+              )}
             </div>
           </div>
-        </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center h-[60vh]">
+            <p className="text-[var(--text-tertiary)] mb-4">请输入搜索内容</p>
+            <button
+              onClick={() => router.push('/')}
+              className="btn-primary"
+            >
+              返回首页
+            </button>
+          </div>
+        )}
       </main>
 
-      <footer className="glass-effect border-t border-[var(--border-color)]">
-        <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4 text-center text-xs sm:text-sm text-[var(--text-tertiary)]">
-          <p>© 2024 QQ浏览器 AI搜索 - Demo版</p>
+      <footer className="border-t border-[var(--border-color)] py-6">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="flex flex-col sm:flex-row justify-between items-center">
+            <p className="text-sm text-[var(--text-tertiary)] mb-4 sm:mb-0">
+              © 2024 AI Search - Demo版
+            </p>
+            <div className="flex gap-6">
+              <a href="#" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--primary-color)] transition-colors">关于</a>
+              <a href="#" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--primary-color)] transition-colors">帮助</a>
+              <a href="#" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--primary-color)] transition-colors">隐私</a>
+            </div>
+          </div>
         </div>
       </footer>
     </div>
   );
 }
 
+// 使用Suspense包装SearchContent组件
 export default function SearchPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-[var(--primary-color)]"></div>
+        <div className="animate-pulse text-center">
+          <div className="h-8 w-32 bg-gray-200 dark:bg-gray-700 rounded-full mx-auto mb-4"></div>
+          <div className="h-4 w-48 bg-gray-200 dark:bg-gray-700 rounded-full mx-auto"></div>
+        </div>
       </div>
     }>
-      <SearchPageContent />
+      <SearchContent />
     </Suspense>
   );
 } 
